@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mente en Juego — Camino de Vida</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 10% 10%,rgba(59,130,246,.12),transparent 25%),
+    radial-gradient(circle at 90% 10%,rgba(236,72,153,.10),transparent 22%),
+    linear-gradient(135deg,#f7fbff,#fff8fc 55%,#f8fff9);
+  color:#172033;
+}
+.glass{background:rgba(255,255,255,.92);border:1px solid rgba(148,163,184,.22);box-shadow:0 18px 55px rgba(30,41,59,.10);backdrop-filter:blur(14px)}
+.fade{animation:fade .35s ease}@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pop{animation:pop .45s ease}@keyframes pop{0%{transform:scale(.95);opacity:.4}60%{transform:scale(1.03);opacity:1}100%{transform:scale(1)}}
+.alertPulse{animation:alertPulse 1.3s infinite}@keyframes alertPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.25)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+.card{transition:.2s}.card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(30,41,59,.10)}
+.badgeGlow{box-shadow:0 0 30px rgba(245,158,11,.25)}
+</style>
+</head>
+<body class="font-sans">
+<div class="max-w-6xl mx-auto px-4 py-6 md:py-9">
+
+<header class="glass rounded-3xl p-5 md:p-7 mb-5">
+  <div class="flex flex-col lg:flex-row gap-5 justify-between lg:items-center">
+    <div>
+      <div class="text-xs uppercase tracking-[.28em] text-violet-600 font-bold">Juego de vida · Misiones · Microlearning</div>
+      <h1 class="text-3xl md:text-5xl font-black mt-1">🎮 MENTE EN JUEGO</h1>
+      <p class="text-slate-500 mt-2">Colegio, universidad, familia, amigos y futuro.</p>
+    </div>
+    <div class="grid grid-cols-3 gap-3 min-w-[320px]">
+      <div class="rounded-2xl bg-sky-50 p-3 text-center"><div class="text-xs text-slate-500">Misión</div><div id="missionCount" class="font-black text-sky-700 text-xl">1/6</div></div>
+      <div class="rounded-2xl bg-amber-50 p-3 text-center"><div class="text-xs text-slate-500">Energía</div><div id="energy" class="font-black text-amber-600 text-xl">100%</div></div>
+      <div class="rounded-2xl bg-emerald-50 p-3 text-center"><div class="text-xs text-slate-500">Medallas</div><div id="medalCount" class="font-black text-emerald-600 text-xl">0</div></div>
+    </div>
+  </div>
+  <div class="mt-5">
+    <div class="flex justify-between text-xs text-slate-500 mb-2"><span>Camino recorrido</span><span id="progressText">0%</span></div>
+    <div class="h-3 bg-slate-100 rounded-full overflow-hidden">
+      <div id="progressBar" class="h-full bg-gradient-to-r from-sky-400 via-violet-400 to-pink-400 transition-all duration-500" style="width:0%"></div>
+    </div>
+  </div>
+</header>
+
+<main id="app" class="glass rounded-3xl p-5 md:p-8 min-h-[650px]"></main>
+
+<footer class="text-center text-xs text-slate-400 mt-5">Experiencia educativa de autoconocimiento. No sustituye una evaluación psicológica profesional.</footer>
+</div>
+
+<script>
+const missions = [
+{
+ title:"Misión 1 · El colegio: encontrar tu voz",
+ icon:"🏫",
+ theme:"Colegio",
+ intro:"Estás en una etapa donde todos parecen opinar sobre quién deberías ser. Amigos, profesores, redes y expectativas empiezan a competir por tu atención.",
+ alert:"ALERTA: presión social detectada.",
+ challenges:[
+  {type:"choice",q:"Un grupo se burla de alguien y espera que tú también lo hagas. ¿Qué haces?",opts:[["Me río para no quedar fuera.","social"],["No participo y cambio de tema.","autonomo"],["Primero observo qué está pasando.","reflexivo"],["Intento frenar la situación sin confrontar demasiado.","equilibrado"]]},
+  {type:"riddle",q:"Acertijo: cuanto más intentas gustarle a todos, menos sabes quién eres. ¿Qué palabra describe lo que necesitas fortalecer?",answer:"identidad",hint:"Tiene que ver con saber quién eres y qué valoras."},
+  {type:"choice",q:"Un profesor te dice que tienes potencial, pero tú dudas. ¿Qué reacción te ayudaría a avanzar?",opts:[["Ignoro el comentario.","impulsivo"],["Pregunto qué puedo mejorar y lo intento.","reflexivo"],["Le cuento a alguien cercano y busco apoyo.","social"],["Acepto el reto y lo uso como impulso.","autonomo"]]}
+ ],
+ micro:"No necesitas tener tu identidad completamente definida. Se construye tomando pequeñas decisiones coherentes contigo.",
+ medal:"🏫 Medalla Voz Propia"
+},
+{
+ title:"Misión 2 · La universidad: elegir tu camino",
+ icon:"🎓",
+ theme:"Universidad",
+ intro:"Ahora las decisiones pesan más: carrera, amistades, tiempo, rendimiento, independencia. Ya no basta con seguir instrucciones.",
+ alert:"ALERTA: decisión de futuro activada.",
+ challenges:[
+  {type:"choice",q:"Todos dicen que cierta carrera 'da más dinero', pero no te interesa. ¿Qué pesa más?",opts:[["Lo que esperan los demás.","social"],["Mis intereses y capacidades.","autonomo"],["Comparar opciones y consecuencias.","reflexivo"],["Buscar equilibrio entre interés, realidad y oportunidades.","equilibrado"]]},
+  {type:"riddle",q:"Acertijo: no es destino, no es suerte y cambia con cada paso que das. ¿Qué es?",answer:"camino",hint:"Lo construyes con tus decisiones."},
+  {type:"choice",q:"Tienes demasiadas entregas y poco tiempo. ¿Qué haces primero?",opts:[["Intento todo a la vez.","impulsivo"],["Priorizar y dividir tareas.","reflexivo"],["Pido ayuda para organizarme.","social"],["Reorganizo, priorizo y negocio lo necesario.","equilibrado"]]}
+ ],
+ micro:"Elegir carrera o rumbo no significa quedar atrapado para siempre. Tu camino puede ajustarse mientras aprendes más sobre ti.",
+ medal:"🎓 Medalla Rumbo Propio"
+},
+{
+ title:"Misión 3 · La familia: crecer sin romper vínculos",
+ icon:"🏠",
+ theme:"Familia",
+ intro:"Tu familia quiere protegerte, pero a veces sus expectativas chocan con lo que tú quieres construir.",
+ alert:"ALERTA: choque de expectativas.",
+ challenges:[
+  {type:"choice",q:"Tu familia quiere decidir algo importante por ti. ¿Qué haces?",opts:[["Acepto para evitar conflicto.","social"],["Digo que no sin explicar.","impulsivo"],["Explico mis razones con calma.","autonomo"],["Escucho, explico mi posición y busco un acuerdo.","equilibrado"]]},
+  {type:"riddle",q:"Acertijo: protege tu espacio sin cerrar la puerta al cariño. ¿Qué necesitas?",answer:"limites",hint:"Sirven para cuidar relaciones y también cuidarte."},
+  {type:"choice",q:"Cometes un error y temes decepcionar a tu familia. ¿Qué sería más útil?",opts:[["Ocultarlo.","impulsivo"],["Hablarlo y asumir responsabilidad.","reflexivo"],["Buscar apoyo de alguien de confianza.","social"],["Reconocerlo, reparar y seguir adelante.","equilibrado"]]}
+ ],
+ micro:"Madurar no significa alejarte de tu familia. Significa aprender a relacionarte desde límites, responsabilidad y comunicación.",
+ medal:"🏠 Medalla Raíces Fuertes"
+},
+{
+ title:"Misión 4 · Los amigos: pertenecer sin perderte",
+ icon:"🤝",
+ theme:"Amigos",
+ intro:"Los amigos pueden ser refugio, impulso y también presión. La pregunta es cuánto de ti estás dispuesto a cambiar para encajar.",
+ alert:"ALERTA: influencia del grupo elevada.",
+ challenges:[
+  {type:"choice",q:"Tus amigos quieren que hagas algo con lo que no estás cómodo. ¿Qué haces?",opts:[["Acepto para no quedar fuera.","social"],["Digo que no con respeto.","autonomo"],["Me voy sin decir nada.","impulsivo"],["Explico mi decisión y propongo otra opción.","equilibrado"]]},
+  {type:"riddle",q:"Acertijo: una amistad sana puede aceptar un 'no' sin convertirlo en castigo. ¿Qué valor está presente?",answer:"respeto",hint:"Es básico en cualquier relación saludable."},
+  {type:"choice",q:"Un amigo está pasando por algo difícil. ¿Qué harías?",opts:[["Le doy órdenes sobre qué hacer.","impulsivo"],["Escucho antes de aconsejar.","reflexivo"],["Me quedo cerca y ofrezco apoyo.","social"],["Escucho, apoyo y sugiero ayuda si la necesita.","equilibrado"]]}
+ ],
+ micro:"Una amistad saludable no exige que te abandones a ti mismo para demostrar lealtad.",
+ medal:"🤝 Medalla Amistad Sana"
+},
+{
+ title:"Misión 5 · Cuando la vida aprieta",
+ icon:"⚡",
+ theme:"Presión",
+ intro:"Llega una etapa donde todo parece ocurrir al mismo tiempo: estudio, problemas personales, expectativas, decisiones y cansancio.",
+ alert:"ALERTA ROJA: sobrecarga emocional.",
+ challenges:[
+  {type:"choice",q:"Sientes que todo está fuera de control. ¿Qué haces primero?",opts:[["Lo ignoro hasta que explote.","impulsivo"],["Ordeno prioridades.","reflexivo"],["Busco apoyo.","social"],["Priorizo, descanso y pido ayuda si hace falta.","equilibrado"]]},
+  {type:"riddle",q:"Acertijo: no elimina el problema, pero evita que el problema te controle. Empieza con P. ¿Qué es?",answer:"pausa",hint:"Detenerte por un momento antes de reaccionar."},
+  {type:"choice",q:"Recibes una crítica dura. ¿Qué haces?",opts:[["Respondo de inmediato.","impulsivo"],["Analizo qué parte puede servirme.","reflexivo"],["Pregunto a alguien de confianza qué piensa.","social"],["Escucho, filtro lo útil y sigo adelante.","equilibrado"]]}
+ ],
+ micro:"La presión no siempre se resuelve siendo más fuerte. Muchas veces se maneja mejor organizando, pausando y buscando apoyo.",
+ medal:"⚡ Medalla Resiliencia"
+},
+{
+ title:"Misión 6 · Tu futuro: ¿quién quieres llegar a ser?",
+ icon:"🚀",
+ theme:"Futuro",
+ intro:"Frente a ti aparecen varias versiones de tu futuro. Ninguna está escrita. Todas dependen de decisiones pequeñas repetidas durante años.",
+ alert:"MISIÓN FINAL: define tu siguiente nivel.",
+ challenges:[
+  {type:"choice",q:"¿Qué debería guiar más tu futuro?",opts:[["La aprobación de los demás.","social"],["Mis valores y metas.","autonomo"],["Análisis de opciones y consecuencias.","reflexivo"],["Un equilibrio entre propósito, realidad y bienestar.","equilibrado"]]},
+  {type:"riddle",q:"Acertijo final: no necesitas verlo completo para comenzar. Solo necesitas saber cuál es el siguiente ____.",answer:"paso",hint:"Una acción pequeña que te acerque a lo que quieres."},
+  {type:"choice",q:"Si te equivocas en una decisión importante, ¿qué mentalidad quieres tener?",opts:[["Pensar que todo terminó.","impulsivo"],["Aprender, ajustar y continuar.","equilibrado"],["Analizar qué pasó y mejorar.","reflexivo"],["Buscar apoyo para volver a intentarlo.","social"]]}
+ ],
+ micro:"Tu futuro no se descubre de una vez. Se construye con decisiones, ajustes, errores, aprendizajes y constancia.",
+ medal:"🚀 Medalla Constructor de Futuro"
+}
+];
+
+let state = JSON.parse(localStorage.getItem("menteVidaV2")) || {
+ current:0, step:0, started:false, medals:[], energy:100,
+ traits:{reflexivo:0,social:0,autonomo:0,impulsivo:0,equilibrado:0},
+ solvedRiddles:0
+};
+
+function save(){localStorage.setItem("menteVidaV2",JSON.stringify(state));}
+function updateHUD(){
+ const done=state.current;
+ const pct=Math.round(done/missions.length*100);
+ progressBar.style.width=pct+"%";
+ progressText.textContent=pct+"%";
+ missionCount.textContent=Math.min(state.current+1,missions.length)+"/"+missions.length;
+ energy.textContent=state.energy+"%";
+ medalCount.textContent=state.medals.length;
+}
+function startGame(){state.started=true;save();renderMission();}
+function resetGame(){
+ state={current:0,step:0,started:false,medals:[],energy:100,traits:{reflexivo:0,social:0,autonomo:0,impulsivo:0,equilibrado:0},solvedRiddles:0};
+ localStorage.removeItem("menteVidaV2");updateHUD();renderIntro();
+}
+
+function renderIntro(){
+ app.innerHTML=`
+ <section class="max-w-4xl mx-auto text-center py-7 fade">
+   <div class="text-7xl mb-4">🌍</div>
+   <div class="text-xs uppercase tracking-[.28em] text-violet-600 font-bold">Modo historia activado</div>
+   <h2 class="text-3xl md:text-5xl font-black mt-2">Tu vida es el mapa. Tus decisiones abren el camino.</h2>
+   <p class="text-slate-600 text-lg md:text-xl leading-relaxed mt-5">
+     Vas a atravesar etapas que se parecen a la vida real: <strong>colegio, universidad, familia, amigos, presión y futuro.</strong>
+     Cada misión tiene varios retos. No buscas una nota. Buscas conocerte, aprender y avanzar.
+   </p>
+   <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-7">
+     <div class="rounded-2xl bg-sky-50 p-4">🏫 Colegio</div>
+     <div class="rounded-2xl bg-violet-50 p-4">🎓 Universidad</div>
+     <div class="rounded-2xl bg-amber-50 p-4">🏠 Familia</div>
+     <div class="rounded-2xl bg-emerald-50 p-4">🤝 Amigos</div>
+     <div class="rounded-2xl bg-red-50 p-4">⚡ Presión</div>
+     <div class="rounded-2xl bg-pink-50 p-4">🚀 Futuro</div>
+   </div>
+   <div class="rounded-3xl bg-slate-900 text-white p-6 mt-7 text-left">
+     <div class="text-xs uppercase tracking-[.2em] text-cyan-300 font-bold">Reglas del juego</div>
+     <p class="mt-2 text-white/85">Cada misión incluye decisiones, alertas y acertijos. Después de completarla desbloqueas una medalla y una microenseñanza para llevar a la vida real.</p>
+   </div>
+   <button onclick="startGame()" class="mt-7 bg-gradient-to-r from-violet-600 to-pink-500 text-white px-8 py-4 rounded-2xl font-black">INICIAR MI CAMINO</button>
+ </section>`;
+}
+
+function renderMission(){
+ if(state.current>=missions.length){renderFinal();return;}
+ const m=missions[state.current];
+ state.step=0; save();
+ app.innerHTML=`
+ <section class="max-w-4xl mx-auto fade">
+   <div class="flex gap-4 items-center mb-5">
+     <div class="text-5xl rounded-2xl bg-violet-50 p-4">${m.icon}</div>
+     <div>
+       <div class="text-xs uppercase tracking-[.22em] text-violet-600 font-bold">${m.theme}</div>
+       <h2 class="text-2xl md:text-4xl font-black">${m.title}</h2>
+     </div>
+   </div>
+   <div class="alertPulse rounded-2xl bg-red-50 border border-red-200 p-4 text-red-700 font-bold mb-5">🚨 ${m.alert}</div>
+   <div class="rounded-3xl bg-sky-50 border border-sky-100 p-5 mb-6"><p class="text-slate-700 text-lg leading-relaxed">${m.intro}</p></div>
+   <div id="challengeZone"></div>
+ </section>`;
+ renderChallenge();
+ updateHUD();
+}
+
+function renderChallenge(){
+ const m=missions[state.current], c=m.challenges[state.step];
+ const zone=document.getElementById("challengeZone");
+ if(!c){showMissionComplete();return;}
+ if(c.type==="choice"){
+   zone.innerHTML=`
+   <div class="fade">
+     <div class="text-xs uppercase tracking-[.2em] text-slate-400 font-bold mb-2">Reto ${state.step+1} de ${m.challenges.length}</div>
+     <h3 class="text-xl md:text-2xl font-black mb-4">${c.q}</h3>
+     <div class="space-y-3">
+       ${c.opts.map((o,i)=>`<button onclick="choose(${i})" class="card w-full text-left rounded-2xl bg-white border border-slate-200 p-4 md:p-5"><span class="inline-flex w-9 h-9 items-center justify-center rounded-full bg-violet-100 text-violet-700 font-black mr-3">${String.fromCharCode(65+i)}</span>${o[0]}</button>`).join("")}
+     </div>
+   </div>`;
+ } else {
+   zone.innerHTML=`
+   <div class="fade">
+     <div class="text-xs uppercase tracking-[.2em] text-slate-400 font-bold mb-2">Acertijo ${state.step+1} de ${m.challenges.length}</div>
+     <div class="rounded-3xl bg-amber-50 border border-amber-100 p-6">
+       <div class="text-4xl mb-3">🧩</div>
+       <h3 class="text-xl md:text-2xl font-black">${c.q}</h3>
+       <div class="mt-5 flex flex-col sm:flex-row gap-3">
+         <input id="riddleInput" class="flex-1 rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-violet-400" placeholder="Escribe tu respuesta">
+         <button onclick="checkRiddle()" class="bg-slate-900 text-white px-5 py-3 rounded-2xl font-black">PROBAR RESPUESTA</button>
+       </div>
+       <button onclick="showHint()" class="mt-3 text-sm text-violet-600 font-bold">💡 Ver pista</button>
+       <div id="hint" class="text-sm text-amber-700 mt-2"></div>
+       <div id="riddleFeedback" class="mt-3"></div>
+     </div>
+   </div>`;
+ }
+}
+
+function choose(i){
+ const c=missions[state.current].challenges[state.step];
+ const trait=c.opts[i][1];
+ state.traits[trait]=(state.traits[trait]||0)+1;
+ if(trait==="impulsivo") state.energy=Math.max(65,state.energy-4);
+ if(trait==="equilibrado"||trait==="autonomo") state.energy=Math.min(100,state.energy+1);
+ state.step++; save(); renderChallenge(); updateHUD();
+}
+
+function normalize(s){return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();}
+function checkRiddle(){
+ const c=missions[state.current].challenges[state.step];
+ const val=normalize(document.getElementById("riddleInput").value);
+ if(val===normalize(c.answer)){
+   state.solvedRiddles++; state.step++; save();
+   riddleFeedback.innerHTML=`<div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-3 text-emerald-700 font-bold">✅ Acertijo resuelto. Has desbloqueado el siguiente reto.</div>`;
+   setTimeout(renderChallenge,650);
+ } else {
+   riddleFeedback.innerHTML=`<div class="rounded-2xl bg-rose-50 border border-rose-200 p-3 text-rose-700">🔄 Aún no. Prueba otra idea o usa la pista.</div>`;
+ }
+}
+function showHint(){
+ const c=missions[state.current].challenges[state.step];
+ document.getElementById("hint").textContent="Pista: "+c.hint;
+}
+
+function showMissionComplete(){
+ const m=missions[state.current];
+ if(!state.medals.includes(m.medal)) state.medals.push(m.medal);
+ save();
+ app.innerHTML=`
+ <section class="max-w-4xl mx-auto pop text-center">
+   <div class="text-7xl mb-3">🏅</div>
+   <div class="text-xs uppercase tracking-[.25em] text-emerald-600 font-bold">Misión completada</div>
+   <h2 class="text-3xl md:text-4xl font-black mt-2">${m.medal}</h2>
+   <div class="rounded-3xl bg-amber-50 border border-amber-100 p-6 mt-6 text-left">
+     <div class="text-xs uppercase tracking-[.2em] text-amber-700 font-bold">Microlearning</div>
+     <p class="text-slate-700 text-lg leading-relaxed mt-3">${m.micro}</p>
+   </div>
+   <div class="rounded-3xl bg-slate-900 text-white p-6 mt-5 text-left">
+     <div class="text-xs uppercase tracking-[.2em] text-cyan-300 font-bold">Mensaje para llevar contigo</div>
+     <p class="text-white/85 mt-3 leading-relaxed">No tienes que cambiar toda tu vida hoy. Elige una pequeña decisión que represente la persona que quieres llegar a ser.</p>
+   </div>
+   <button onclick="nextMission()" class="mt-7 bg-gradient-to-r from-violet-600 to-pink-500 text-white px-7 py-4 rounded-2xl font-black">DESBLOQUEAR SIGUIENTE ETAPA →</button>
+ </section>`;
+ updateHUD();
+}
+
+function nextMission(){state.current++;state.step=0;save();renderMission();updateHUD();}
+
+function getProfile(){
+ const arr=Object.entries(state.traits).sort((a,b)=>b[1]-a[1]);
+ const main=arr[0]?.[0]||"equilibrado";
+ const profiles={
+  reflexivo:["🧠 Estratega Reflexivo","Piensas antes de actuar, observas consecuencias y buscas comprender antes de moverte.","Tu reto es no quedarte demasiado tiempo pensando cuando ya tienes suficiente información."],
+  social:["🤝 Conector Social","Las relaciones y la pertenencia tienen mucho peso en tus decisiones.","Tu reto es distinguir cuándo eliges por conexión y cuándo por miedo a decepcionar."],
+  autonomo:["🎯 Decisor Autónomo","Tiendes a apoyarte en tus propios valores, necesidades y límites.","Tu reto es mantener tu autonomía sin perder la riqueza de escuchar otras perspectivas."],
+  impulsivo:["⚡ Explorador de Acción","Reaccionas rápido y puedes tener mucha energía para moverte.","Tu reto es crear una pausa breve antes de decisiones importantes."],
+  equilibrado:["💬 Mediador Estratégico","Buscas equilibrio entre tus metas, las relaciones y las consecuencias.","Tu reto es recordar que equilibrio también significa priorizarte cuando sea necesario."]
+ };
+ return profiles[main];
+}
+
+function renderFinal(){
+ const p=getProfile();
+ const medals=state.medals.map(m=>`<div class="badgeGlow rounded-2xl bg-white border border-amber-200 p-4 text-center font-bold">${m}</div>`).join("");
+ app.innerHTML=`
+ <section class="max-w-4xl mx-auto fade">
+   <div class="text-center">
+     <div class="text-8xl mb-4">🏆</div>
+     <div class="text-xs uppercase tracking-[.28em] text-pink-600 font-bold">Camino completado</div>
+     <h2 class="text-4xl md:text-5xl font-black mt-2">Has desbloqueado tu Medalla de Vida</h2>
+     <p class="text-slate-600 text-lg mt-4">No ganaste por responder “perfecto”. Ganaste por detenerte, pensar, elegir y aprender.</p>
+   </div>
+
+   <div class="rounded-3xl bg-gradient-to-br from-amber-50 to-yellow-50 border border-amber-200 p-7 mt-8 text-center badgeGlow">
+     <div class="text-7xl">🥇</div>
+     <h3 class="text-3xl font-black mt-3">Medalla: Constructor de Futuro</h3>
+     <p class="text-slate-700 mt-3">Por completar las seis etapas y convertir decisiones cotidianas en aprendizaje.</p>
+   </div>
+
+   <div class="rounded-3xl bg-violet-50 border border-violet-100 p-6 mt-6">
+     <div class="text-xs uppercase tracking-[.2em] text-violet-700 font-bold">Tu tendencia predominante</div>
+     <h3 class="text-3xl font-black mt-2">${p[0]}</h3>
+     <p class="text-slate-700 mt-3">${p[1]}</p>
+     <div class="rounded-2xl bg-white p-4 mt-4"><strong>🚀 Tu siguiente nivel:</strong> ${p[2]}</div>
+   </div>
+
+   <div class="mt-7">
+     <h3 class="text-xl font-black mb-4">Tus medallas</h3>
+     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">${medals}</div>
+   </div>
+
+   <div class="rounded-3xl bg-slate-900 text-white p-7 mt-7">
+     <div class="text-xs uppercase tracking-[.2em] text-cyan-300 font-bold">Mensaje final</div>
+     <h3 class="text-2xl md:text-3xl font-black mt-2">Tu futuro no se encuentra. Se construye.</h3>
+     <p class="text-white/85 mt-4 leading-relaxed">
+       Se construye cuando aprendes a decir no, cuando eliges una carrera por razones propias, cuando cuidas una amistad sana,
+       cuando aceptas que tu familia no siempre pensará igual, cuando fallas y vuelves a intentarlo, y cuando das un paso aunque todavía no veas todo el camino.
+     </p>
+     <p class="text-cyan-200 font-bold mt-5">No necesitas tener tu vida resuelta. Solo necesitas decidir cuál será tu próximo paso.</p>
+   </div>
+
+   <div class="text-center mt-7">
+     <button onclick="resetGame()" class="bg-slate-900 text-white px-6 py-3 rounded-2xl font-black">Jugar de nuevo</button>
+   </div>
+ </section>`;
+ state.current=missions.length; save(); updateHUD();
+}
+
+updateHUD();
+if(state.started && state.current<missions.length) renderMission();
+else if(state.started && state.current>=missions.length) renderFinal();
+else renderIntro();
+</script>
+</body>
+</html>
